@@ -1,6 +1,7 @@
-import { supabaseServer } from '@/lib/supabase-server'
+import { createClient } from '@/lib/supabase/server'
 import CopyLinkButton from './CopyLinkButton'
 import CopyMessageButton from './CopyMessageButton'
+import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 
@@ -27,9 +28,13 @@ function isOverdue(invoice: Invoice): boolean {
 }
 
 export default async function DashboardPage() {
-  const { data: invoices } = await supabaseServer
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { data: invoices } = await supabase
     .from('invoices')
     .select('*')
+    .eq('user_id', user!.id)
     .order('created_at', { ascending: false })
 
   const all: Invoice[] = invoices ?? []
@@ -45,18 +50,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
 
-      {/* Nav */}
-      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
-          Bill<span className="text-blue-500">Ping</span>
-        </Link>
-        <Link
-          href="/create"
-          className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg"
-        >
-          + New Invoice
-        </Link>
-      </nav>
+      <Navbar />
 
       <div className="flex-1 p-8">
       <div className="max-w-4xl mx-auto">

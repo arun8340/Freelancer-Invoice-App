@@ -1,26 +1,10 @@
 import Link from 'next/link'
+import Navbar from '@/components/Navbar'
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
-
-      {/* Nav */}
-      <nav className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-        <span className="text-xl font-bold text-gray-900 tracking-tight">
-          Bill<span className="text-blue-500">Ping</span>
-        </span>
-        <div className="flex items-center gap-3">
-          <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-800">
-            Dashboard
-          </Link>
-          <Link
-            href="/create"
-            className="bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded-lg"
-          >
-            Create Invoice
-          </Link>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero */}
       <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-24">

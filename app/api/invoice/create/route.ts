@@ -1,8 +1,15 @@
-import { supabaseServer } from '@/lib/supabase-server'
+import { createClient } from '@/lib/supabase/server'
 import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(req: Request) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await req.json()
 
     const { client_name, client_email, amount, description, due_date, upi_id } = body
@@ -20,10 +27,11 @@ export async function POST(req: Request) {
 
     const token = uuidv4()
 
-    const { data, error } = await supabaseServer
+    const { data, error } = await supabase
       .from('invoices')
       .insert([
         {
+          user_id: user.id,
           client_name: client_name.trim(),
           client_email: client_email.trim().toLowerCase(),
           description: description?.trim() || null,
